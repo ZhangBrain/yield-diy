@@ -1,0 +1,48 @@
+# folders
+.coverage_artifacts/
+.coverage_cache/
+.coverage_contracts/
+.openzeppelin/unknown*
+artifacts/
+build/
+cache/
+cache_hardhat/
+cache_foundry/
+coverage/
+dist/
+node_modules/
+typechain/
+forge-out/
+deployments/
+# files
+*.env
+*.log
+*.tsbuildinfo
+dev-keys.json
+coverage.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+.DS_Store
+.deps
+yarn.lock
+package-lock.json
+contracts/.DS_Store
+contracts/eth/.DS_Store
+contracts/eth/exchanges/.DS_Store
+contracts/eth/strategies/.DS_Store
+contracts/usd/.DS_Store
+test/strategy-eth/.DS_Store
+test/strategy-usd/.DS_Store
+test/strategy-usd//convex/.DS_Store
+
+
+
+# OVM artifacts
+artifacts-ovm/
+cache-ovm/
+
+# IDE
+.idea/
+.vscode/
