@@ -22,7 +22,6 @@ contract UniswapV3Actions {
         address _tokenIn;
         address _tokenOut;
         uint24 _poolFee;
-        uint256 _amountIn;
         address _onBehalf;
     }
 
@@ -30,15 +29,16 @@ contract UniswapV3Actions {
     /// using the _tokenIn/_tokenOut _poolFee pool by calling `exactInputSingle` in the swap router.
     /// @dev The calling address must approve this contract to spend at least `amountIn` worth of its _tokenIn for this function to succeed.
     function swapExactInputSingle(bytes memory _staticParameters, bytes memory _dynamicParameters) external returns (uint256 _amountOut) {
-        SwapParams memory params = parseInputs(_staticParameters);
+        SwapParams memory params = parseStaticParameters(_staticParameters);
+        uint256 _amountIn = parseDynamicParameters(_dynamicParameters);
 
         uint256 tokenInBalance = IERC20Upgradeable(params._tokenIn).balanceOf(address(this));
-        if (params._amountIn > tokenInBalance) {
+        if (_amountIn > tokenInBalance) {
             revert("AmountInError");
         }
 
         // Approve the router to spend _tokenIn.
-        TransferHelper.safeApprove(params._tokenIn, address(swapRouter), params._amountIn);
+        TransferHelper.safeApprove(params._tokenIn, address(swapRouter), _amountIn);
 
         // Naively set amountOutMinimum to 0. In production, use an oracle or other data source to choose a safer value for amountOutMinimum.
         // Set the sqrtPriceLimitx96 to be 0 to ensure we swap our exact input amount.
@@ -48,7 +48,7 @@ contract UniswapV3Actions {
             fee : params._poolFee,
             recipient : params._onBehalf,
             deadline : block.timestamp,
-            amountIn : params._amountIn,
+            amountIn : _amountIn,
             amountOutMinimum : 0,
             sqrtPriceLimitX96 : 0
         });
@@ -57,7 +57,12 @@ contract UniswapV3Actions {
         _amountOut = swapRouter.exactInputSingle(swapParamsParams);
     }
 
-    function parseInputs(bytes memory _callData) public pure returns (SwapParams memory params) {
-        params = abi.decode(_callData, (SwapParams));
+    function parseStaticParameters(bytes memory _callData) public pure returns (SwapParams memory _params) {
+        _params = abi.decode(_callData, (SwapParams));
+    }
+
+
+    function parseDynamicParameters(bytes memory _callData) public pure returns (uint256 _amountIn) {
+        _amountIn = abi.decode(_callData, (uint256));
     }
 }

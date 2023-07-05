@@ -35,11 +35,10 @@ contract UniswapV3ActionsTest is Test {
             _tokenIn: USDT,
             _tokenOut: USDC,
             _poolFee: 500,
-            _amountIn: amountIn,
             _onBehalf: FRIEND2
         });
 
-        uint256 amountOut = uniswapV3Actions.swapExactInputSingle(abi.encode(params), abi.encode(params));
+        uint256 amountOut = uniswapV3Actions.swapExactInputSingle(abi.encode(params), abi.encode(amountIn));
         console2.log("after swap amountOut=", amountOut);
         console2.log("after swap FRIEND2 USDT amount=", balanceOfToken(USDT, FRIEND2));
         console2.log("after swap FRIEND2 USDC amount=", balanceOfToken(USDC, FRIEND2));
